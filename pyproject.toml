@@ -1,0 +1,3 @@
+[tool.ruff.lint]
+preview = true
+extend-select = ["I", "FURB"]
