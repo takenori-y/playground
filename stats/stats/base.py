@@ -36,6 +36,18 @@ class BaseStats(ABC):
         raise NotImplementedError
 
     @abstractmethod
+    def sub(self, x: np.ndarray) -> None:
+        """Subtract a data point(s) from the statistics.
+
+        Parameters
+        ----------
+        x : np.ndarray [shape=(d,) or (n, d)]
+            The data point(s) to subtract.
+
+        """
+        raise NotImplementedError
+
+    @abstractmethod
     def merge(self, stats: BaseStats) -> None:
         """Merge the statistics with another set of statistics.
 
@@ -43,6 +55,18 @@ class BaseStats(ABC):
         ----------
         stats : BaseStats
             The statistics to merge with.
+
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def purge(self, stats: BaseStats) -> None:
+        """Purge the statistics with another set of statistics.
+
+        Parameters
+        ----------
+        stats : BaseStats
+            The statistics to purge with.
 
         """
         raise NotImplementedError

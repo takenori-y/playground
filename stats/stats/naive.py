@@ -65,13 +65,39 @@ class NaiveStats(BaseStats):
         if x.ndim != 2:
             raise ValueError("The input must be a 1D or 2D array.")
 
-        d = x.shape[1]
+        _, d = x.shape
         if self.buffer is None:
             self.buffer = np.zeros((self.p + 1, d))
-        elif d != self.buffer.shape[1]:
+        if d != self.buffer.shape[1]:
             raise ValueError("The dimensionality of the input is inconsistent.")
 
         self.buffer += power(x, self.ps).sum(axis=0)
+
+    def sub(self, x: np.ndarray) -> None:
+        """Subtract a data point(s) from the statistics.
+
+        Parameters
+        ----------
+        x : np.ndarray [shape=(d,) or (n, d)]
+            The data point(s) to subtract.
+
+        """
+        if x.ndim == 1:
+            x = x.reshape(1, -1)
+        if x.ndim != 2:
+            raise ValueError("The input must be a 1D or 2D array.")
+
+        n, d = x.shape
+        if self.buffer is None:
+            raise ValueError("The statistics is already empty.")
+        if d != self.buffer.shape[1]:
+            raise ValueError("The dimensionality of the input is inconsistent.")
+
+        if self.buffer[0, 0] - n <= 0:
+            self.buffer = None
+            return
+
+        self.buffer -= power(x, self.ps).sum(axis=0)
 
     def merge(self, stats: BaseStats) -> None:
         """Merge the statistics with another set of statistics.
@@ -93,6 +119,30 @@ class NaiveStats(BaseStats):
             return
 
         self.buffer += stats.buffer
+
+    def purge(self, stats: BaseStats) -> None:
+        """Purge the statistics with another set of statistics.
+
+        Parameters
+        ----------
+        stats : BaseStats
+            The statistics to purge with.
+
+        """
+        if not isinstance(stats, type(self)):
+            raise ValueError("The input must be an object of the same class.")
+
+        if stats.buffer is None:
+            return
+
+        if self.buffer is None:
+            raise ValueError("The statistics is already empty.")
+
+        if self.buffer[0, 0] - stats.buffer[0, 0] <= 0:
+            self.buffer = None
+            return
+
+        self.buffer -= stats.buffer
 
     def clear(self) -> None:
         """Clear the accumulated statistics."""
@@ -129,14 +179,14 @@ class NaiveStats(BaseStats):
         mu_powers = power(moments[1], self.ps)
         for q in range(2, self.p + 1):
             term1 = x[q]
-            term2 = -np.sum(
+            term2 = np.sum(
                 [
                     math.comb(q, i) * mu_powers[i] * moments[q - i]
                     for i in range(1, q - 1)
                 ],
                 axis=0,
             )
-            term3 = -moments[0] * mu_powers[q]
-            moments[q] = term1 + term2 + term3
+            term3 = moments[0] * mu_powers[q]
+            moments[q] = term1 - term2 - term3
 
         return moments

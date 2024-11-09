@@ -65,6 +65,17 @@ class StatsWrapper(BaseStats):
         """
         self.stats.add(x)
 
+    def sub(self, x: np.ndarray) -> None:
+        """Subtract a data point(s) from the statistics.
+
+        Parameters
+        ----------
+        x : np.ndarray [shape=(d,) or (n, d)]
+            The data point(s) to subtract.
+
+        """
+        self.stats.sub(x)
+
     def merge(self, stats: BaseStats) -> None:
         """Merge the statistics with another set of statistics.
 
@@ -77,6 +88,19 @@ class StatsWrapper(BaseStats):
         if not isinstance(stats, type(self)):
             raise ValueError("The input must be an object of the same class.")
         self.stats.merge(stats.stats)
+
+    def purge(self, stats: BaseStats) -> None:
+        """Purge the statistics with another set of statistics.
+
+        Parameters
+        ----------
+        stats : BaseStats
+            The statistics to purge with.
+
+        """
+        if not isinstance(stats, type(self)):
+            raise ValueError("The input must be an object of the same class.")
+        self.stats.purge(stats.stats)
 
     def clear(self) -> None:
         """Clear the accumulated statistics."""
