@@ -1,3 +1,8 @@
+# Copyright (c) 2024 Takenori Yoshimura
+#
+# This software is released under the MIT License.
+# https://opensource.org/licenses/MIT
+
 check:
 	. ../.venv/bin/activate	&& python -m mypy .
 

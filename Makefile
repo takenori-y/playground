@@ -1,3 +1,8 @@
+# Copyright (c) 2024 Takenori Yoshimura
+#
+# This software is released under the MIT License.
+# https://opensource.org/licenses/MIT
+
 PYTHON_VERSION := 3.9
 
 venv:
