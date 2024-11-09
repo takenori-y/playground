@@ -146,8 +146,7 @@ class OnlineStats(BaseStats):
             return
 
         if self.buffer is None:
-            self.buffer = stats.buffer.copy()
-            return
+            raise ValueError("The statistics is already empty.")
 
         if self.buffer[0, 0] - stats.buffer[0, 0] <= 0:
             self.buffer = None

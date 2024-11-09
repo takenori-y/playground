@@ -22,7 +22,7 @@ class StatsWrapper(BaseStats):
         mode : ["naive", "online", "batch"]
             The mode to use for calculating the statistics.
 
-        **kwargs : Dict[str, Any]
+        **kwargs
             Additional keyword arguments.
 
         """
